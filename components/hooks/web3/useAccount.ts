@@ -12,7 +12,7 @@ type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>
 
 export type UseAccountHook = ReturnType<AccountHookFactory>
 
-export const hookFactory: AccountHookFactory = ({provider, ethereum, isLoading}) => (params) => {
+export const hookFactory: AccountHookFactory = ({provider, ethereum, isLoading}) => () => {
     const {data, mutate, isValidating, ...swr} = useSWR(provider? "web3/useAccount" : null, async () =>{
         const accounts = await provider!.listAccounts();
         const account = accounts[0];
@@ -21,7 +21,8 @@ export const hookFactory: AccountHookFactory = ({provider, ethereum, isLoading})
         }
         return account;
     },{
-        revalidateOnFocus:false
+        revalidateOnFocus:false,
+        shouldRetryOnError: false
     })
 
     useEffect(()=>{
@@ -35,7 +36,7 @@ export const hookFactory: AccountHookFactory = ({provider, ethereum, isLoading})
         console.log(args);
         const accounts = args[0] as string[];
         if(accounts.length === 0 ){
-            mutate(undefined);
+            //mutate(undefined);
             console.error("Please, connect to web3 wallet");
         } else if(accounts[0] !== data){
             mutate(accounts[0]);
@@ -54,7 +55,7 @@ export const hookFactory: AccountHookFactory = ({provider, ethereum, isLoading})
         ...swr,
         data,
         isValidating,
-        isLoading: isLoading || isValidating,
+        isLoading: isLoading as boolean,
         isInstalled: ethereum?.isMetaMask || false,
         mutate,
         connect

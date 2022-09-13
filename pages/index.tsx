@@ -1,7 +1,6 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useWeb3 } from 'components/providers/web3';
 import type { NextPage } from 'next'
 import { BaseLayout, NftList } from '../components'
 
@@ -9,26 +8,7 @@ import nfts from '../content/meta.json';
 import { NftMetaData } from '@_types/nft';
 
 const Home: NextPage = () => {
-
-  const { provider, contract } = useWeb3();
-
-  const getNftInfo = async () =>{
-    console.log(await contract!.name())
-    console.log(await contract!.symbol())
-  }
-  if(contract){
-    getNftInfo();
-  }
-
-  const getAccounts = async () =>{
-    let accounts = await provider!.listAccounts();
-    //console.log(accounts)
-  }
-
-  if(provider){
-    getAccounts();
-  }
-  
+ 
   return (
     <BaseLayout>
       <div className="relative bg-gray-50 pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
