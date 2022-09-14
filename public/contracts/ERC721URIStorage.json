@@ -352,7 +352,7 @@
         1469
       ],
       "ERC165": [
-        1719
+        1793
       ],
       "ERC721": [
         866
@@ -361,7 +361,7 @@
         1125
       ],
       "IERC165": [
-        1731
+        1805
       ],
       "IERC721": [
         982
@@ -373,7 +373,7 @@
         1000
       ],
       "Strings": [
-        1695
+        1769
       ]
     },
     "id": 1126,
@@ -438,8 +438,8 @@
           866,
           1152,
           982,
-          1719,
-          1731,
+          1793,
+          1805,
           1469
         ],
         "name": "ERC721URIStorage",
@@ -456,7 +456,7 @@
                 "305:7:3"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1695,
+              "referencedDeclaration": 1769,
               "src": "305:7:3"
             },
             "nodeType": "UsingForDirective",
@@ -1911,7 +1911,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.9",
-  "updatedAt": "2022-09-08T10:38:15.801Z",
+  "updatedAt": "2022-09-14T04:43:19.655Z",
   "devdoc": {
     "details": "ERC721 token with storage based token URI management.",
     "kind": "dev",

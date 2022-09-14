@@ -7,15 +7,51 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract NftMarket is ERC721URIStorage{
     using Counters for Counters.Counter;
 
+    struct NftItem {
+        uint tokenId;
+        uint price;
+        address creator;
+        bool isListed;
+    }
+
+    uint public listingPrice = 0.025 ether;
+
     // listed items in this market
     Counters.Counter private _listedItems;
     // new tokens generated
     Counters.Counter private _tokenIds;
 
+    mapping(string => bool) private _usedTokenURIs;
+    mapping(uint => NftItem) private _idToNftItem;
+
+  
+
+    event NftItemCreated(
+        uint tokenId,
+        uint price,
+        address creator,
+        bool isListed
+    );
+
     constructor() ERC721("CreaturesNft","CNFT"){}
 
+    function tokenURIExists(string memory tokenURI) public view returns (bool) {
+        return _usedTokenURIs[tokenURI] == true;
+    }
+
+    function listedItemsCount() public view returns (uint){
+        return _listedItems.current();
+    }
+
+    function getNftItem(uint tokenId) public view returns (NftItem memory){
+        return _idToNftItem[tokenId];
+    }
+
     // mint means genearte new token/nft
-    function mintToken(string memory tokenURI) public payable returns(uint) {
+    function mintToken(string memory tokenURI, uint price) public payable returns(uint) {
+        require(!tokenURIExists(tokenURI), "Token URI already exists");
+        require(msg.value == listingPrice, "Price must be equal to listing price");
+
         _tokenIds.increment();
         _listedItems.increment();
 
@@ -23,7 +59,40 @@ contract NftMarket is ERC721URIStorage{
 
         _safeMint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
+        _usedTokenURIs[tokenURI] = true;
+        _createNftItem(newTokenId, price);
 
         return newTokenId;
     }
+
+    function buyNft(uint tokenId) public payable{
+        uint price = _idToNftItem[tokenId].price;
+        address owner = ERC721.ownerOf(tokenId);
+
+        require(msg.sender != owner, "You already owns this NFT");
+        require(msg.value == price, "Please submit the asking price");
+
+        _idToNftItem[tokenId].isListed = false;
+        _listedItems.decrement();
+
+        _transfer(owner, msg.sender, tokenId);
+        payable(owner).transfer(msg.value);
+
+    }
+
+    function _createNftItem(
+        uint tokenId, 
+        uint price) private {
+        require(price > 0, "Price must be at least 1 wei");
+        _idToNftItem[tokenId] = NftItem(
+            tokenId, 
+            price, 
+            msg.sender,
+            true
+        );
+
+        emit NftItemCreated(tokenId, price, msg.sender, true);
+    }   
+
+   
 }
