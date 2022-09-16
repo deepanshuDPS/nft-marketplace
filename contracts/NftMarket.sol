@@ -96,6 +96,10 @@ contract NftMarket is ERC721URIStorage{
         return items;
     }
 
+    function burnToken(uint tokenId) public {
+        _burn(tokenId);
+    }
+
     // mint means genearte new token/nft
     function mintToken(string memory tokenURI, uint price) public payable returns(uint) {
         require(!tokenURIExists(tokenURI), "Token URI already exists");
@@ -153,9 +157,16 @@ contract NftMarket is ERC721URIStorage{
         // minting token
         if(from == address(0)){
             _addTokenToAllTokensEnumeration(tokenId);
+        } else 
+        // transfering token
+        if(from !=to){
+            _removeTokenFromOwnerEnumeration(from, tokenId);
         }
 
-        if(to != from){
+        // burn token
+        if(to == address(0)){
+            _removeTokenFromAllTokensEnumeration(tokenId);
+        } else if(to != from){
             _addTokenToOwnerTokensEnumeration(to, tokenId);
         }
 
@@ -170,6 +181,33 @@ contract NftMarket is ERC721URIStorage{
         uint length = ERC721.balanceOf(to);
         _ownedTokens[to][length] = tokenId;
         _idToOwnedIndex[tokenId] = length;
+    }
+
+    function _removeTokenFromOwnerEnumeration(address from, uint tokenId) private {
+        uint lastTokenIndex = ERC721.balanceOf(from) - 1;
+        uint tokenIndex = _idToOwnedIndex[tokenId];
+
+        if(tokenIndex != lastTokenIndex) {
+            uint lastTokenId = _ownedTokens[from][lastTokenIndex];
+
+            _ownedTokens[from][tokenIndex] = lastTokenIndex;
+            _idToOwnedIndex[lastTokenId] = tokenIndex;
+        }
+
+        delete _idToOwnedIndex[tokenId];
+        delete _ownedTokens[from][lastTokenIndex];
+    }
+
+    function _removeTokenFromAllTokensEnumeration(uint tokenId) private {
+        uint lastTokenIndex = _allNfts.length - 1;
+        uint tokenIndex = _idToNftIndex[tokenId];
+        uint lastTokenID = _allNfts[lastTokenIndex];
+
+        _allNfts[tokenIndex] = lastTokenID;
+        _idToNftIndex[lastTokenID] = tokenIndex;
+
+        delete _idToNftIndex[tokenId];
+        _allNfts.pop();
     }
    
 }
