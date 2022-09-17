@@ -1,0 +1,19 @@
+{
+  "description": "MuZing App Logo for light theme",
+  "image": "https://gateway.pinata.cloud/ipfs/QmarV8m8tRrr6SHEu2C2hzUBbf5YNZfpJJ1qUfhx7a42kF",
+  "name": "MuZing Light #1",
+  "attributes": [
+    {
+      "trait_type": "attack",
+      "value": "20"
+    },
+    {
+      "trait_type": "health",
+      "value": "100"
+    },
+    {
+      "trait_type": "speed",
+      "value": "30"
+    }
+  ]
+}

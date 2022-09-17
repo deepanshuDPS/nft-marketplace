@@ -1,0 +1,19 @@
+{
+  "description": "MuZing App Logo for Dark theme",
+  "image": "https://gateway.pinata.cloud/ipfs/QmeFWQa1onpSzcALzYbtv7EDBKGpidB3FgRxfnxL4htH8T",
+  "name": "MuZing Dark #2",
+  "attributes": [
+    {
+      "trait_type": "attack",
+      "value": "50"
+    },
+    {
+      "trait_type": "health",
+      "value": "90"
+    },
+    {
+      "trait_type": "speed",
+      "value": "100"
+    }
+  ]
+}
