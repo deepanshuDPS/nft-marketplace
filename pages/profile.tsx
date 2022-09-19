@@ -112,7 +112,14 @@ const Profile: NextPage = () => {
               <div className="pb-16 space-y-6">
                 <div>
                   <div className="block w-full aspect-w-10 aspect-h-7 rounded-lg overflow-hidden">
-                    <img src={activeNft.meta.image} alt="" className="object-cover" />
+                    <img src={activeNft.meta.image} 
+                    style={{width: '100%',
+                    // Without height undefined it won't work
+                    height: undefined,
+                    // figure out your image aspect ratio
+                    aspectRatio: 1,
+                    }}
+                    alt="" className="object-cover" />
                   </div>
                   <div className="mt-4 flex items-start justify-between">
                     <div>
@@ -144,11 +151,17 @@ const Profile: NextPage = () => {
                     Download Image
                   </button>
                   <button
-                    onClick={() => {}}
+                    onClick={() => {
+                      nfts.listNft(
+                        activeNft.tokenId,
+                        activeNft.price
+                      )
+                    }}
                     type="button"
-                    className="flex-1 ml-3 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    disabled = {activeNft.isListed}
+                    className="disabled:text-gray-400 disabled:cursor-not-allowed flex-1 ml-3 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Transfer?
+                    {activeNft.isListed? "Nft is listed":"List Nft"}
                   </button>
                 </div>
               </div>

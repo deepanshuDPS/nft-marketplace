@@ -1,36 +1,13 @@
 import { Nft } from "@_types/";
 import { CryptoHookFactory } from "@_types/hooks";
 import { ethers } from "ethers";
+import { useCallback } from "react";
 import useSWR from "swr"
 
-const Web3 = require('web3');
 
-// uni swap token for current account
-const getUniSwapToken = async (account:string) =>{
-    try{
-        const rpc = process.env.NEXT_PUBLIC_RPC_URL as string;
-        const newProvider = new Web3.providers.HttpProvider(rpc);
-        const token = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984';
-        const minABI = [
-                {
-                    constant: true,
-                    inputs: [{ name: "_owner", type: "address" }],
-                    name: "balanceOf",
-                    outputs: [{ name: "balance", type: "uint256" }],
-                    type: "function",
-                },
-                ];
-        const web3 = new Web3(newProvider);
-        const contract = new web3.eth.Contract(minABI, token);
-        const res = await contract.methods.balanceOf(account).call();
-        const format = web3.utils.fromWei(res);
-        console.log('here_'+format);
-        }catch(e){
-            console.log(e);
-        }
+type UseListedNftsResponse = { 
+    buyNft: (token:number, value:number) => Promise<void>
 }
-
-type UseListedNftsResponse = { }
 
 type ListedNftsHookFactory = CryptoHookFactory<Nft[], UseListedNftsResponse>
 
@@ -58,9 +35,24 @@ export const hookFactory: ListedNftsHookFactory = ({contract}) => () => {
             return nfts;
     })
 
+    const _contract = contract;
+
+    const buyNft = useCallback(async (tokenId:number, value: number) =>{
+        try{
+            await contract?.buyNft(
+                tokenId, {
+                    value: ethers.utils.parseEther(value.toString())
+                }
+            )
+            alert("You have bought Nft. See profile page.")
+        }catch (e:any){
+            console.error(e.message);
+        }
+    },[_contract] );
 
     return {
         ...swr,
+        buyNft,
         data: data || []
     };
 }
