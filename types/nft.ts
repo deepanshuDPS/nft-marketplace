@@ -8,6 +8,7 @@ export type NFtAttribute = {
 
 
 export type NftMetaData = {
+    imageFile?: File;
     name: string,
     description: string,
     image: string,

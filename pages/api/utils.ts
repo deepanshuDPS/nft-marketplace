@@ -4,11 +4,12 @@ import { Session } from "next-iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withIronSession } from "next-iron-session";
 import contract from "../../public/contracts/NftMarket.json";
-import { NftMarketContract } from "@_types/";
+import { NftMarketContract } from "types/nftMarketContract";
 import * as util from "ethereumjs-util";
 
 const NETWORKS = {
-    "5777" : "Ganache"
+    "5777" : "Ganache",
+    "4": "Rinkeby"
 }
 
 type NETWORK = typeof NETWORKS;
@@ -32,10 +33,12 @@ export function withSession(handler: any) {
     })
 }
 
+const url = process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_RPC_URL : "http://127.0.0.1:7545";
+
 export const addressCheckMiddleware = async (req:NextApiRequest & {session:Session}, res: NextApiResponse) => {
     return new Promise((resolve,reject) =>{
         const message = req.session.get("message-session");
-        const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:7545");
+        const provider = new ethers.providers.JsonRpcProvider(url);
         const contract = new ethers.Contract(
             contractAddress,
             abi,

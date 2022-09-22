@@ -4,6 +4,7 @@ import {
   BytesLike as Arrayish,
   BigNumber,
   BigNumberish,
+  Contract,
 } from 'ethers';
 import { EthersContractContextV5 } from 'ethereum-abi-types-generator';
 
@@ -133,7 +134,7 @@ export interface NftitemResponse {
   isListed: boolean;
   3: boolean;
 }
-export interface NftMarketContract {
+export interface NftMarketContract extends Contract {
   /**
    * Payable: false
    * Constant: false

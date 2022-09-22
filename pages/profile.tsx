@@ -4,7 +4,7 @@ import type { NextPage } from 'next'
 import { BaseLayout } from '../components'
 
 import { useOwnedNfts } from '@hooks';
-import { Nft } from '@_types/';
+import { Nft } from 'types/nft';
 import { useEffect, useState } from 'react';
 
 const tabs = [
@@ -23,7 +23,7 @@ const Profile: NextPage = () => {
     if(nfts.data && nfts.data.length > 0){
       setActiveNft(nfts.data[0])
     }
-    return () => setActiveNft(null)
+    return () => setActiveNft(undefined)
   },[nfts.data])
 
   return (
@@ -85,7 +85,7 @@ const Profile: NextPage = () => {
                             // Without height undefined it won't work
                             height: undefined,
                             // figure out your image aspect ratio
-                            aspectRatio: 1,
+                            aspectRatio: "1",
                           }}
                             className={classNames(
                               nft.tokenId === activeNft?.tokenId ? '' : 'group-hover:opacity-75',
@@ -93,7 +93,7 @@ const Profile: NextPage = () => {
                             )}
                           />
                           <button type="button" className="absolute inset-0 focus:outline-none">
-                            <span className="sr-only">View details for {nft.name}</span>
+                            <span className="sr-only">View details for {nft.meta.name}</span>
                           </button>
                         </div>
                         <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">
@@ -117,7 +117,7 @@ const Profile: NextPage = () => {
                     // Without height undefined it won't work
                     height: undefined,
                     // figure out your image aspect ratio
-                    aspectRatio: 1,
+                    aspectRatio: "1",
                     }}
                     alt="" className="object-cover" />
                   </div>
@@ -125,7 +125,7 @@ const Profile: NextPage = () => {
                     <div>
                       <h2 className="text-lg font-medium text-gray-900">
                         <span className="sr-only">Details for </span>
-                        {activeNft.name}
+                        {activeNft.meta.name}
                       </h2>
                       <p className="text-sm font-medium text-gray-500">{activeNft.meta.description}</p>
                     </div>

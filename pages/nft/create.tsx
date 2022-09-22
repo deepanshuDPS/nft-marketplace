@@ -5,17 +5,20 @@ import { ChangeEvent, JSXElementConstructor, Key, ReactElement, ReactFragment, u
 import { BaseLayout } from '../../components'
 import { Switch } from '@headlessui/react'
 import Link from 'next/link'
-import { NftMetaData } from '@_types/';
+import { NftMetaData } from 'types/nft';
 import axios from 'axios';
 import { useWeb3 } from '@providers/web3';
-import { PinataRes } from '@_types/';
+import { PinataRes } from 'types/nft';
 import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
+import { useNetwork } from '@hooks';
 
 const NftCreate: NextPage = () => {
 
   const ALLOWED_FIELDS = ["name", "description", "image", "attributes"];
 
   const { ethereum, contract } = useWeb3();
+  const {network} = useNetwork();
   const [nftURI, setNftURI] = useState("");
   const [hasURI, setHasURI] = useState(false);
   const [price, setPrice] = useState("");
@@ -81,7 +84,7 @@ const NftCreate: NextPage = () => {
         const buffer = await selectedFile.arrayBuffer();
         const bytes = new Uint8Array(buffer);
 
-        const res = await axios.post("/api/verify",{
+        const promise = axios.post("/api/verify",{
           address: account,
           signature: signedData,
           nft: nftMeta,
@@ -89,6 +92,14 @@ const NftCreate: NextPage = () => {
           contentType: selectedFile.type,
           fileName: selectedFile.name.replace(/\.[^/.]+$/, "")
         });
+
+        const res = await toast.promise(
+          promise, {
+            pending: "Minting NFT Token",
+            success: "NFT has been created",
+            error: "Minting error"
+          }
+        )
 
         const resData = (await res.data) as PinataRes;
 
@@ -103,27 +114,52 @@ const NftCreate: NextPage = () => {
     try {
       const nftRes = await axios.get(nftURI);
       const content = nftRes.data;
-
       Object.keys(content).forEach(key => {
         if (!ALLOWED_FIELDS.includes(key)) {
           throw new Error("Invalid Json structure");
         }
       })
-
+      debugger
       const tx = await contract?.mintToken(
         nftURI,
         ethers.utils.parseEther(price), {
           value: ethers.utils.parseEther(0.025.toString())
         }
       );
-
-      await tx?.wait();
-      alert("Nft was created!");
+      debugger
+      await toast.promise(
+        tx!.wait(), {
+          pending: "Creating NFT",
+          success: "NFT Created",
+          error: "Error on Nft Creation"
+        }
+      );
     } catch(e: any) {
       console.error(e.message);
     }
   }
 
+    if (!network.isConnectedToNetwork) {
+      return (
+        <BaseLayout>
+          <div className="rounded-md bg-yellow-50 p-4 mt-10">
+            <div className="flex">
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-yellow-800">Attention needed</h3>
+                <div className="mt-2 text-sm text-yellow-700">
+                  <p>
+                  { network.isLoading ?
+                    "Loading..." :
+                    `Connect to ${network.targetNetwork}`
+                  }
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </BaseLayout>
+      )
+    }
 
   return (
     <BaseLayout>
@@ -314,7 +350,7 @@ const NftCreate: NextPage = () => {
                   </div>
                   }
                   <div className="grid grid-cols-6 gap-6">
-                    { nftMeta.attributes.map((attribute: { trait_type: boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | Key | null | undefined; value: string | number | readonly string[] | undefined; }) =>
+                    { nftMeta.attributes.map((attribute: { trait_type : string , value : string}) =>
                       <div key={attribute.trait_type} className="col-span-6 sm:col-span-6 lg:col-span-2">
                         <label htmlFor={attribute.trait_type} className="block text-sm font-medium text-gray-700">
                           {attribute.trait_type}

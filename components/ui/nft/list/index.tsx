@@ -1,5 +1,5 @@
 import { useListedNfts } from "@hooks";
-import { Nft } from "@_types/";
+import { Nft } from "types/nft";
 import { FunctionComponent } from "react";
 import NftItem from "../item";
 

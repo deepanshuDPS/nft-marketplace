@@ -1,4 +1,4 @@
-import { CryptoHookFactory } from "@_types/hooks";
+import { CryptoHookFactory } from "types/hooks"
 import { useEffect } from "react";
 import useSWR from "swr"
 

@@ -3,7 +3,7 @@ import { NavBar } from "../..";
 
 
 
-const BaseLayout : FunctionComponent = ({children}) =>{
+const BaseLayout : FunctionComponent<any> = ({children}) =>{
 
     return (
         <>

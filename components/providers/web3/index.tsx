@@ -2,7 +2,7 @@ import { useState, useContext, FunctionComponent, createContext, useEffect } fro
 import { createDefaultState, createWeb3State, loadContract, Web3State } from "./utils";
 import { ethers } from "ethers";
 import { MetaMaskInpageProvider } from "@metamask/providers";
-import { NftMarketContract } from "@_types/";
+import { NftMarketContract } from "types/nftMarketContract";
 
 const pageReload = () =>{
     window.location.reload();
@@ -26,9 +26,9 @@ const removeGlobalListeners = (ethereum: MetaMaskInpageProvider) =>{
 
 const Web3Context = createContext<Web3State>(createDefaultState());
 
-const Web3Provider : FunctionComponent = ({children}) =>{
+const Web3Provider : FunctionComponent<any> = ({children}) =>{
 
-    const [web3Api, setWeb3Api] = useState(createDefaultState())
+    const [web3Api, setWeb3Api] = useState<Web3State>(createDefaultState())
 
     useEffect(()=>{
 

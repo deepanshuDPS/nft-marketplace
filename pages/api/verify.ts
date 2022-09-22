@@ -6,7 +6,7 @@ import { Session } from "next-iron-session";
 import FormData from "form-data";
 import { NextApiRequest, NextApiResponse } from "next";
 import { addressCheckMiddleware, contractAddress, pinataApiKey, pinataSecretApiKey, withSession } from "./utils";
-import { NftMetaData, PinataRes } from "@_types/";
+import { NftMetaData, PinataRes } from "types/nft";
 import axios from "axios";
 
 export default withSession(async ( req:NextApiRequest & {session:Session}, res: NextApiResponse) => {
@@ -22,7 +22,7 @@ export default withSession(async ( req:NextApiRequest & {session:Session}, res: 
             await addressCheckMiddleware(req, res);
 
             debugger;
-            const bufferFromBytes = Buffer.from(Object.values(body.bytes));
+            const bufferFromBytes = Buffer.from(Object.values(body.bytes) as Uint8Array | ReadonlyArray<number>);
             const formData = new FormData();
             const contentType = body.contentType;
             formData.append(
